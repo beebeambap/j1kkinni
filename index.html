@@ -313,10 +313,15 @@
     margin-top: 10px; flex-shrink: 0;
   }
   .outro-total-label { font-size: 11px; color: rgba(255,255,255,0.55); font-weight: 500; }
+  .outro-total-right { display: flex; flex-direction: column; align-items: flex-end; }
   /* 한끼 금액: 카드의 핵심 — 크고 눈에 띄게 */
   .outro-total-price {
     font-size: 34px; font-weight: 700; color: white;
     letter-spacing: -0.02em; line-height: 1;
+  }
+  .outro-per-portion {
+    font-size: 11px; color: rgba(255,255,255,0.65); font-weight: 500;
+    margin-top: 4px;
   }
 
   .outro-note {
@@ -373,6 +378,11 @@
       <div class="field-label">오늘 만든 것</div>
       <input type="text" id="menuInput" placeholder="계란 양배추 토스트">
     </div>
+    <div class="field-group">
+      <div class="field-label">나눠 먹는 횟수</div>
+      <input type="number" id="portionInput" placeholder="1" min="1" value="1">
+    </div>
+    <div></div>
   </div>
 </div>
 
@@ -426,7 +436,10 @@
       <div id="outroItems"></div>
       <div class="outro-total-box">
         <span class="outro-total-label">이 한 끼</span>
-        <span class="outro-total-price" id="outroTotal"></span>
+        <div class="outro-total-right">
+          <span class="outro-total-price" id="outroTotal"></span>
+          <span class="outro-per-portion hidden" id="outroPerPortion"></span>
+        </div>
       </div>
       <div class="outro-note hidden" id="outroNote"></div>
     </div>
@@ -671,6 +684,16 @@
     });
     document.getElementById('outroItems').innerHTML = outroHTML;
     document.getElementById('outroTotal').textContent = outroSum ? outroSum.toLocaleString() + '원' : '—';
+
+    const portions = Math.max(1, parseInt(document.getElementById('portionInput').value) || 1);
+    const perPortionEl = document.getElementById('outroPerPortion');
+    if (portions >= 2 && outroSum > 0) {
+      const per = Math.round(outroSum / portions);
+      perPortionEl.textContent = `${portions}회 나눠 먹으면 1회 ≈ ${per.toLocaleString()}원`;
+      perPortionEl.classList.remove('hidden');
+    } else {
+      perPortionEl.classList.add('hidden');
+    }
 
     const noteEl = document.getElementById('outroNote');
     if (noteLines.length) {
