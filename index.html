@@ -201,7 +201,7 @@
 
   .shortform-card {
     width: 320px;
-    height: 320px;
+    min-height: 320px;
     background: var(--paper);
     border-radius: 20px;
     padding: 28px 28px 24px;
@@ -349,8 +349,8 @@
     content: ''; flex: 1; height: 1px; background: var(--border);
   }
 
-  #introItems { flex: 1; overflow: hidden; }
-  #outroItems { flex: 1; overflow: hidden; min-height: 0; }
+  #introItems { flex: 1; }
+  #outroItems { flex: 1; min-height: 0; }
   .hidden { display: none !important; }
 </style>
 </head>
@@ -534,8 +534,7 @@
       const calcBadge = document.createElement('div');
       calcBadge.className = 'calc-badge';
       calcBadge.dataset.calcFor = ing.id;
-      const amt = calcUsedPrice(ing);
-      calcBadge.textContent = ing.isStock ? '재고' : (amt > 0 ? '≈ ' + amt.toLocaleString() + '원' : '—');
+      setBadgeContent(calcBadge, ing);
 
       const stockToggle = document.createElement('label');
       stockToggle.className = 'stock-toggle';
@@ -574,12 +573,33 @@
     return sel;
   }
 
+  function setBadgeContent(el, ing) {
+    if (ing.isStock) { el.textContent = '재고'; return; }
+    const total = parseFloat(ing.total), used = parseFloat(ing.used);
+    if (total && used && !unitsCompatible(ing.unit, ing.usedUnit)) {
+      el.textContent = '단위 불일치';
+      return;
+    }
+    const amt = calcUsedPrice(ing);
+    el.textContent = amt > 0 ? '≈ ' + amt.toLocaleString() + '원' : '—';
+  }
+
   function refreshCalc(ing) {
     const el = document.querySelector(`[data-calc-for="${ing.id}"]`);
     if (!el) return;
-    if (ing.isStock) { el.textContent = '재고'; return; }
-    const amt = calcUsedPrice(ing);
-    el.textContent = amt > 0 ? '≈ ' + amt.toLocaleString() + '원' : '—';
+    setBadgeContent(el, ing);
+  }
+
+  function toBase(value, unit) {
+    if (unit === 'kg') return { value: value * 1000, base: 'g' };
+    if (unit === 'g')  return { value, base: 'g' };
+    if (unit === 'L')  return { value: value * 1000, base: 'ml' };
+    if (unit === 'ml') return { value, base: 'ml' };
+    return { value, base: unit };
+  }
+
+  function unitsCompatible(u1, u2) {
+    return toBase(1, u1).base === toBase(1, u2).base;
   }
 
   function calcUsedPrice(ing) {
@@ -588,7 +608,14 @@
     const price = parseFloat(ing.price);
     const used = parseFloat(ing.used);
     if (!total || !price || !used) return 0;
-    return Math.round((used / total) * price);
+    const tb = toBase(total, ing.unit);
+    const ub = toBase(used, ing.usedUnit);
+    if (tb.base !== ub.base) return 0;
+    return Math.round((ub.value / tb.value) * price);
+  }
+
+  function fmtNum(n) {
+    return parseFloat(n.toFixed(2)).toString();
   }
 
   function generateCards() {
@@ -632,7 +659,15 @@
         <div class="outro-item-price ${ing.isStock ? 'stock' : ''}">${ing.isStock ? '재고' : (amt ? '≈ ' + amt.toLocaleString() + '원' : '—')}</div>
       </div>`;
       const tN = parseFloat(ing.total), uN = parseFloat(ing.used);
-      if (!ing.isStock && tN && uN && tN > uN) noteLines.push(`${ing.name} ${tN - uN}${ing.unit} 남음`);
+      if (!ing.isStock && tN && uN && unitsCompatible(ing.unit, ing.usedUnit)) {
+        const tb = toBase(tN, ing.unit);
+        const ub = toBase(uN, ing.usedUnit);
+        if (tb.value > ub.value) {
+          const remainBase = tb.value - ub.value;
+          const remainInBuy = ing.unit === 'kg' || ing.unit === 'L' ? remainBase / 1000 : remainBase;
+          noteLines.push(`${ing.name} ${fmtNum(remainInBuy)}${ing.unit} 남음`);
+        }
+      }
     });
     document.getElementById('outroItems').innerHTML = outroHTML;
     document.getElementById('outroTotal').textContent = outroSum ? outroSum.toLocaleString() + '원' : '—';
@@ -649,21 +684,15 @@
 
   function downloadCard(cardId, filename) {
     const card = document.getElementById(cardId);
+    const w = card.offsetWidth;
+    const h = card.offsetHeight;
     html2canvas(card, {
       scale: 3, backgroundColor: '#faf7f2', useCORS: true, logging: false,
-      width: 320, height: 320
+      width: w, height: h
     }).then(canvas => {
-      // 정사각형 강제: 중앙 크롭
-      const size = Math.min(canvas.width, canvas.height);
-      const out = document.createElement('canvas');
-      out.width = size; out.height = size;
-      const ctx = out.getContext('2d');
-      const ox = (canvas.width - size) / 2;
-      const oy = (canvas.height - size) / 2;
-      ctx.drawImage(canvas, ox, oy, size, size, 0, 0, size, size);
       const link = document.createElement('a');
       link.download = filename + '_' + new Date().toISOString().slice(0, 10) + '.png';
-      link.href = out.toDataURL('image/png');
+      link.href = canvas.toDataURL('image/png');
       link.click();
     });
   }
