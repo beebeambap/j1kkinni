@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>롱폼 PNG — 지끼니</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Noto+Sans+KR:wght@400;500;700&family=Gowun+Batang:wght@400;700&family=Nanum+Myeongjo:wght@400;700&family=Noto+Serif+KR:wght@400;500;700&family=Gaegu:wght@400;700&family=Gowun+Dodum&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-nav: #f0ebe3;
+    --border-nav: #d9cfc4;
+    --ink-nav: #2a2018;
+    --muted-nav: #9a8870;
+    --accent-nav: #c9a97a;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Gowun Dodum', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #EDE8DC;
+    color: #3D342B;
+    min-height: 100vh;
+  }
+
+  /* ── 탭 네비게이션 ── */
+  .tab-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--bg-nav);
+    display: flex;
+    align-items: stretch;
+    padding: 0 20px;
+    border-bottom: 1.5px solid var(--border-nav);
+    box-shadow: 0 1px 6px rgba(0,0,0,0.04);
+  }
+
+  .tab-logo {
+    font-family: 'Nanum Pen Script', cursive;
+    font-size: 22px;
+    color: var(--ink-nav);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    padding: 12px 16px 12px 0;
+    margin-right: 8px;
+    border-right: 1px solid var(--border-nav);
+  }
+
+  .tab-link {
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    border-bottom: 2.5px solid transparent;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted-nav);
+    text-decoration: none;
+    transition: color 0.15s;
+    margin-bottom: -1.5px;
+    white-space: nowrap;
+  }
+
+  .tab-link:hover { color: var(--ink-nav); }
+
+  .tab-link.active {
+    color: var(--ink-nav);
+    border-bottom-color: var(--accent-nav);
+    font-weight: 700;
+  }
+
+  /* ── 본문 ── */
+  .lf-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  .lf-title {
+    font-family: 'Gowun Batang', serif;
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    color: #3D342B;
+  }
+
+  .lf-subtitle {
+    font-size: 12px;
+    color: #7A6F5C;
+    margin-bottom: 24px;
+  }
+
+  .lf-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  @media (min-width: 1024px) {
+    .lf-layout { grid-template-columns: 380px 1fr; }
+  }
+
+  /* ── 입력 패널 ── */
+  .input-panel {
+    background: #F5F1E8;
+    border-radius: 12px;
+    padding: 20px;
+    border: 0.5px solid #A89B82;
+  }
+
+  .input-panel h2 {
+    font-family: 'Gowun Batang', serif;
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: #3D342B;
+    letter-spacing: 1px;
+  }
+
+  .field { margin-bottom: 14px; }
+
+  .field label {
+    display: block;
+    font-size: 11px;
+    color: #7A6F5C;
+    margin-bottom: 4px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+
+  .field input,
+  .field textarea,
+  .field select {
+    width: 100%;
+    padding: 8px 10px;
+    border: 0.5px solid #A89B82;
+    border-radius: 4px;
+    background: #FAF7EF;
+    font-family: inherit;
+    font-size: 13px;
+    color: #3D342B;
+  }
+
+  .field input:focus,
+  .field textarea:focus,
+  .field select:focus {
+    outline: none;
+    border-color: #5C5247;
+    background: #FFFCF5;
+  }
+
+  .field textarea { resize: vertical; min-height: 50px; }
+
+  .ingredient-row {
+    display: grid;
+    grid-template-columns: 1fr 80px 28px;
+    gap: 6px;
+    margin-bottom: 6px;
+  }
+
+  .ingredient-row input { padding: 6px 8px; font-size: 12px; }
+
+  .ingredient-row button {
+    background: transparent;
+    border: 0.5px solid #A89B82;
+    border-radius: 4px;
+    color: #7A6F5C;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 0;
+  }
+
+  .ingredient-row button:hover { background: #E8DFC9; color: #3D342B; }
+
+  .add-ing-btn {
+    width: 100%;
+    padding: 8px;
+    background: transparent;
+    border: 0.5px dashed #A89B82;
+    border-radius: 4px;
+    color: #7A6F5C;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 12px;
+    margin-top: 4px;
+  }
+
+  .add-ing-btn:hover { background: #E8DFC9; color: #3D342B; }
+
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+  .download-btn {
+    width: 100%;
+    padding: 12px;
+    background: #3D342B;
+    border: none;
+    border-radius: 6px;
+    color: #F5F1E8;
+    font-family: 'Gowun Batang', serif;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 8px;
+    letter-spacing: 1px;
+  }
+
+  .download-btn:hover { background: #2C2620; }
+  .download-btn:active { transform: scale(0.98); }
+
+  .lf-divider { height: 0.5px; background: #A89B82; margin: 16px 0; }
+
+  /* ── 미리보기 패널 ── */
+  .preview-panel {
+    background: #F5F1E8;
+    border-radius: 12px;
+    padding: 20px;
+    border: 0.5px solid #A89B82;
+  }
+
+  .preview-panel h2 {
+    font-family: 'Gowun Batang', serif;
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: #3D342B;
+    letter-spacing: 1px;
+  }
+
+  .preview-wrap {
+    width: 100%;
+    overflow: auto;
+    background: #2C2C2A;
+    border-radius: 8px;
+    padding: 16px;
+  }
+
+  #preview-canvas {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+    background: #F5F1E8;
+    border-radius: 4px;
+  }
+
+  .lf-info {
+    font-size: 11px;
+    color: #7A6F5C;
+    margin-top: 10px;
+    line-height: 1.6;
+  }
+
+  .lf-info strong { color: #3D342B; }
+</style>
+</head>
+<body>
+
+<nav class="tab-nav">
+  <a href="index.html" class="tab-logo">지끼니</a>
+  <a href="calculator.html" class="tab-link">식비 계산기</a>
+  <a href="template.html" class="tab-link active">롱폼 PNG</a>
+</nav>
+
+<div class="lf-container">
+  <div class="lf-title">가로형 템플릿 생성기</div>
+  <p class="lf-subtitle">1920 × 1080 (16:9) · 롱폼용 사이드 패널</p>
+
+  <div class="lf-layout">
+    <!-- 입력 영역 -->
+    <div class="input-panel">
+      <h2>내용 입력</h2>
+
+      <div class="field">
+        <label>회차 (예: EP. 002)</label>
+        <input type="text" id="episode" value="EP. 002" maxlength="20">
+      </div>
+
+      <div class="field">
+        <label>요리명</label>
+        <input type="text" id="title" value="500원짜리 포카치아" maxlength="30">
+      </div>
+
+      <div class="field">
+        <label>한줄 카피</label>
+        <textarea id="copy" maxlength="80">오븐 없이, 밀가루 한 봉으로 사흘치 빵.</textarea>
+      </div>
+
+      <div class="lf-divider"></div>
+
+      <h2>재료</h2>
+      <div id="ingredients-list"></div>
+      <button class="add-ing-btn" onclick="addIngredient()">+ 재료 추가</button>
+
+      <div class="lf-divider"></div>
+
+      <h2>비용</h2>
+      <div class="field-row">
+        <div class="field">
+          <label>총 비용</label>
+          <input type="text" id="total-cost" value="1,520원">
+        </div>
+        <div class="field">
+          <label>1인분</label>
+          <input type="text" id="per-serving" value="510원">
+        </div>
+      </div>
+
+      <div class="lf-divider"></div>
+
+      <h2>채널 정보</h2>
+      <div class="field">
+        <label>채널명</label>
+        <input type="text" id="channel-name" value="먹는 게 남는 거라서">
+      </div>
+      <div class="field">
+        <label>핸들</label>
+        <input type="text" id="handle" value="@지끼니">
+      </div>
+
+      <div class="lf-divider"></div>
+
+      <h2>폰트 선택</h2>
+      <div class="field">
+        <label>요리명 폰트</label>
+        <select id="title-font">
+          <option value="'Gowun Batang', serif">고운바탕 (단정)</option>
+          <option value="'Nanum Myeongjo', serif">나눔명조 (전통)</option>
+          <option value="'Noto Serif KR', serif">노토세리프 (모던)</option>
+          <option value="'Gaegu', cursive">개구 (손글씨, 강함)</option>
+          <option value="'Gowun Dodum', sans-serif">고운도담 (산세리프)</option>
+        </select>
+      </div>
+
+      <div class="lf-divider"></div>
+
+      <button class="download-btn" onclick="downloadPNG()">PNG 다운로드 (1920×1080)</button>
+
+      <p class="lf-info" style="margin-top: 12px;">
+        <strong>사용 방법</strong><br>
+        1. 위에 내용 입력<br>
+        2. 다운로드 버튼 클릭<br>
+        3. CapCut/Premiere에서 배경으로 깔고<br>
+        　우측 영상 자리에 세로 영상 얹기
+      </p>
+    </div>
+
+    <!-- 미리보기 영역 -->
+    <div class="preview-panel">
+      <h2>미리보기</h2>
+      <div class="preview-wrap">
+        <canvas id="preview-canvas" width="1920" height="1080"></canvas>
+      </div>
+      <p class="lf-info">
+        <strong>영상 자리:</strong> 우측에 검은 영역 (해상도: 약 580 × 1031px, 9:16 비율)<br>
+        <strong>다운로드:</strong> 영상 영역은 <strong>투명</strong>으로 처리되어, 편집 프로그램에서 영상을 그 자리에 정확히 배치할 수 있어요
+      </p>
+    </div>
+  </div>
+</div>
+
+<script>
+  let ingredients = [
+    { name: '강력분', amount: '200g' },
+    { name: '드라이이스트', amount: '2g' },
+    { name: '소금', amount: '3g' },
+    { name: '올리브유', amount: '15ml' },
+    { name: '물', amount: '140ml' },
+    { name: '로즈마리', amount: '한 줄기' }
+  ];
+
+  function renderIngredients() {
+    const list = document.getElementById('ingredients-list');
+    list.innerHTML = '';
+    ingredients.forEach((ing, i) => {
+      const row = document.createElement('div');
+      row.className = 'ingredient-row';
+      row.innerHTML = `
+        <input type="text" placeholder="재료명" value="${ing.name}" oninput="updateIngredient(${i}, 'name', this.value)">
+        <input type="text" placeholder="양" value="${ing.amount}" oninput="updateIngredient(${i}, 'amount', this.value)">
+        <button onclick="removeIngredient(${i})" title="삭제">×</button>
+      `;
+      list.appendChild(row);
+    });
+  }
+
+  function updateIngredient(i, key, value) {
+    ingredients[i][key] = value;
+    drawCanvas();
+  }
+
+  function addIngredient() {
+    if (ingredients.length >= 8) {
+      alert('재료는 최대 8개까지 입력 가능해요. (공간 제약)');
+      return;
+    }
+    ingredients.push({ name: '', amount: '' });
+    renderIngredients();
+    drawCanvas();
+  }
+
+  function removeIngredient(i) {
+    ingredients.splice(i, 1);
+    renderIngredients();
+    drawCanvas();
+  }
+
+  function drawCanvas() {
+    const canvas = document.getElementById('preview-canvas');
+    const ctx = canvas.getContext('2d');
+    const W = 1920;
+    const H = 1080;
+
+    ctx.fillStyle = '#F5F1E8';
+    ctx.fillRect(0, 0, W, H);
+
+    const PANEL_X = 140;
+    const PANEL_W = 950;
+
+    const episode = document.getElementById('episode').value || 'EP. 001';
+    ctx.fillStyle = '#7A6F5C';
+    ctx.font = '700 32px "Gowun Dodum", sans-serif';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'top';
+    drawSpacedText(ctx, episode.toUpperCase(), PANEL_X, 180, 4);
+
+    const title = document.getElementById('title').value || '요리명';
+    const titleFont = document.getElementById('title-font').value;
+    ctx.fillStyle = '#3D342B';
+    ctx.font = `500 88px ${titleFont}`;
+    ctx.textBaseline = 'top';
+
+    const titleLines = wrapTextByLength(title, 12);
+    let titleY = 240;
+    titleLines.forEach(line => {
+      ctx.fillText(line, PANEL_X, titleY);
+      titleY += 100;
+    });
+
+    const lineY = titleY + 30;
+    ctx.strokeStyle = '#A89B82';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(PANEL_X, lineY);
+    ctx.lineTo(PANEL_X + 120, lineY);
+    ctx.stroke();
+
+    const copy = document.getElementById('copy').value || '';
+    ctx.fillStyle = '#5C5247';
+    ctx.font = 'italic 400 32px "Gowun Dodum", sans-serif';
+    const copyLines = wrapTextByLength(copy, 22);
+    let copyY = lineY + 40;
+    copyLines.forEach(line => {
+      ctx.fillText(line, PANEL_X, copyY);
+      copyY += 44;
+    });
+
+    const ingredientsStartY = 600;
+
+    ctx.fillStyle = '#7A6F5C';
+    ctx.font = '700 28px "Gowun Dodum", sans-serif';
+    drawSpacedText(ctx, '재료', PANEL_X, ingredientsStartY, 4);
+
+    ctx.font = '400 30px "Gowun Dodum", sans-serif';
+    ctx.textBaseline = 'top';
+
+    const colWidth = PANEL_W / 2;
+    const rowHeight = 50;
+
+    ingredients.forEach((ing, i) => {
+      const col = i % 2;
+      const row = Math.floor(i / 2);
+      const x = PANEL_X + col * colWidth;
+      const y = ingredientsStartY + 60 + row * rowHeight;
+
+      ctx.fillStyle = '#3D342B';
+      ctx.textAlign = 'left';
+      ctx.fillText(ing.name, x, y);
+
+      ctx.fillStyle = '#7A6F5C';
+      ctx.textAlign = 'right';
+      ctx.fillText(ing.amount, x + colWidth - 60, y);
+    });
+
+    const bottomY = 920;
+
+    ctx.strokeStyle = '#A89B82';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(PANEL_X, bottomY - 30);
+    ctx.lineTo(PANEL_X + PANEL_W - 60, bottomY - 30);
+    ctx.stroke();
+
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'top';
+    ctx.fillStyle = '#7A6F5C';
+    ctx.font = '400 26px "Gowun Dodum", sans-serif';
+    ctx.fillText('총 비용', PANEL_X, bottomY);
+
+    ctx.fillStyle = '#3D342B';
+    ctx.font = '700 32px "Gowun Dodum", sans-serif';
+    ctx.fillText(document.getElementById('total-cost').value, PANEL_X + 140, bottomY - 4);
+
+    ctx.fillStyle = '#7A6F5C';
+    ctx.font = '400 26px "Gowun Dodum", sans-serif';
+    ctx.fillText('1인분', PANEL_X + 380, bottomY);
+
+    ctx.fillStyle = '#3D342B';
+    ctx.font = '700 32px "Gowun Dodum", sans-serif';
+    ctx.fillText(document.getElementById('per-serving').value, PANEL_X + 490, bottomY - 4);
+
+    ctx.fillStyle = '#3D342B';
+    ctx.font = '700 26px "Gowun Dodum", sans-serif';
+    ctx.fillText(document.getElementById('channel-name').value, PANEL_X, bottomY + 60);
+
+    ctx.fillStyle = '#7A6F5C';
+    ctx.font = '400 24px "Gowun Dodum", sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillText(document.getElementById('handle').value, PANEL_X + PANEL_W - 60, bottomY + 62);
+
+    const VIDEO_H = 1031;
+    const VIDEO_W = VIDEO_H * 9 / 16;
+    const VIDEO_X = W - VIDEO_W - 158;
+    const VIDEO_Y = (H - VIDEO_H) / 2;
+
+    ctx.fillStyle = '#2C2C2A';
+    ctx.fillRect(VIDEO_X, VIDEO_Y, VIDEO_W, VIDEO_H);
+
+    ctx.fillStyle = '#888780';
+    ctx.font = '400 28px "Gowun Dodum", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('[ 세로 영상 자리 ]', VIDEO_X + VIDEO_W / 2, VIDEO_Y + VIDEO_H / 2 - 40);
+    ctx.font = '400 22px "Gowun Dodum", sans-serif';
+    ctx.fillStyle = '#5F5E5A';
+    ctx.fillText('9 : 16  (다운로드 시 투명)', VIDEO_X + VIDEO_W / 2, VIDEO_Y + VIDEO_H / 2);
+  }
+
+  function drawSpacedText(ctx, text, x, y, spacing) {
+    let currentX = x;
+    for (let char of text) {
+      ctx.fillText(char, currentX, y);
+      currentX += ctx.measureText(char).width + spacing;
+    }
+  }
+
+  function wrapTextByLength(text, maxLen) {
+    if (!text) return [''];
+    if (text.length <= maxLen) return [text];
+    const lines = [];
+    let current = '';
+    const words = text.split(' ');
+    for (let word of words) {
+      if ((current + word).length <= maxLen) {
+        current += (current ? ' ' : '') + word;
+      } else {
+        if (current) lines.push(current);
+        current = word;
+      }
+    }
+    if (current) lines.push(current);
+    return lines;
+  }
+
+  function downloadPNG() {
+    const exportCanvas = document.createElement('canvas');
+    exportCanvas.width = 1920;
+    exportCanvas.height = 1080;
+    const exportCtx = exportCanvas.getContext('2d');
+
+    const previewCanvas = document.getElementById('preview-canvas');
+    exportCtx.drawImage(previewCanvas, 0, 0);
+
+    const VIDEO_H = 1031;
+    const VIDEO_W = VIDEO_H * 9 / 16;
+    const VIDEO_X = 1920 - VIDEO_W - 158;
+    const VIDEO_Y = (1080 - VIDEO_H) / 2;
+
+    exportCtx.clearRect(VIDEO_X, VIDEO_Y, VIDEO_W, VIDEO_H);
+
+    const titleVal = document.getElementById('title').value.replace(/\s+/g, '_') || 'jikkini';
+    const link = document.createElement('a');
+    link.download = `jikkini_${titleVal}_1920x1080.png`;
+    link.href = exportCanvas.toDataURL('image/png');
+    link.click();
+  }
+
+  document.querySelectorAll('input, textarea, select').forEach(el => {
+    el.addEventListener('input', drawCanvas);
+    el.addEventListener('change', drawCanvas);
+  });
+
+  document.fonts.ready.then(() => {
+    renderIngredients();
+    drawCanvas();
+  });
+
+  renderIngredients();
+  drawCanvas();
+</script>
+</body>
+</html>

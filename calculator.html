@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>식비 계산기 — 지끼니</title>
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+  :root {
+    --paper: #faf7f2;
+    --bg: #f0ebe3;
+    --border: #d9cfc4;
+    --ink: #2a2018;
+    --muted: #9a8870;
+    --accent: #c9a97a;
+    --dashed: #c9bfb3;
+    --ui-bg: #ffffff;
+    --ui-border: #e5e0d8;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    background: var(--bg);
+    font-family: 'Noto Sans KR', sans-serif;
+    min-height: 100vh;
+  }
+
+  /* ── 탭 네비게이션 ── */
+  .tab-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--bg);
+    display: flex;
+    align-items: stretch;
+    padding: 0 20px;
+    border-bottom: 1.5px solid var(--border);
+    box-shadow: 0 1px 6px rgba(0,0,0,0.04);
+  }
+
+  .tab-logo {
+    font-family: 'Nanum Pen Script', cursive;
+    font-size: 22px;
+    color: var(--ink);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    padding: 12px 16px 12px 0;
+    margin-right: 8px;
+    border-right: 1px solid var(--border);
+  }
+
+  .tab-link {
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    border-bottom: 2.5px solid transparent;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.15s;
+    margin-bottom: -1.5px;
+    white-space: nowrap;
+  }
+
+  .tab-link:hover { color: var(--ink); }
+
+  .tab-link.active {
+    color: var(--ink);
+    border-bottom-color: var(--accent);
+    font-weight: 700;
+  }
+
+  /* ── 본문 래퍼 ── */
+  .calc-main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 24px 16px 80px;
+  }
+
+  .header { text-align: center; padding: 8px 0 4px; }
+  .header-title { font-family: 'Nanum Pen Script', cursive; font-size: 30px; color: var(--ink); }
+  .header-sub { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+  /* ── 패널 ── */
+  .panel {
+    width: 100%;
+    background: var(--ui-bg);
+    border-radius: 16px;
+    padding: 20px 16px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  }
+  .panel-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .field-group { display: flex; flex-direction: column; gap: 5px; }
+  .field-label { font-size: 11px; font-weight: 500; color: var(--muted); }
+
+  input[type="text"], input[type="number"] {
+    background: var(--bg);
+    border: 1.5px solid var(--ui-border);
+    border-radius: 10px;
+    padding: 12px 12px;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 15px;
+    color: var(--ink);
+    outline: none;
+    width: 100%;
+    transition: border-color 0.15s;
+    -webkit-appearance: none;
+  }
+  input:focus { border-color: var(--accent); background: #fff; }
+  input::placeholder { color: var(--dashed); font-size: 13px; }
+
+  select {
+    background: var(--bg);
+    border: 1.5px solid var(--ui-border);
+    border-radius: 10px;
+    padding: 12px 6px;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 13px;
+    color: var(--ink);
+    outline: none;
+    width: 100%;
+    -webkit-appearance: none;
+    appearance: none;
+    text-align: center;
+    cursor: pointer;
+  }
+
+  /* ── 재료 카드 ── */
+  .ing-card {
+    background: var(--bg);
+    border-radius: 14px;
+    padding: 14px 12px;
+    margin-bottom: 10px;
+  }
+
+  .ing-card-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .ing-number {
+    width: 24px; height: 24px;
+    background: var(--accent);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; color: white;
+    flex-shrink: 0;
+  }
+
+  .ing-name-input {
+    flex: 1;
+    background: white !important;
+    border-radius: 8px !important;
+    padding: 10px 12px !important;
+    font-size: 15px !important;
+    font-weight: 500 !important;
+  }
+
+  .ing-remove {
+    background: none; border: none;
+    color: var(--dashed); font-size: 22px;
+    cursor: pointer; padding: 0 4px; line-height: 1;
+  }
+
+  .ing-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .ing-col-label {
+    font-size: 10px; font-weight: 700;
+    color: var(--muted); letter-spacing: 0.06em;
+    margin-bottom: 6px;
+  }
+
+  .row2 { display: grid; grid-template-columns: 1fr 68px; gap: 5px; margin-bottom: 6px; }
+
+  .calc-badge {
+    background: white;
+    border-radius: 8px;
+    border: 1.5px solid var(--ui-border);
+    padding: 10px 8px;
+    font-size: 13px; font-weight: 700;
+    color: var(--accent);
+    text-align: center;
+    margin-top: 6px;
+    min-height: 42px;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .stock-toggle {
+    display: flex; align-items: center; gap: 6px;
+    margin-top: 6px; cursor: pointer; user-select: none;
+  }
+  .stock-toggle input[type="checkbox"] {
+    width: 16px; height: 16px; padding: 0;
+    cursor: pointer; accent-color: var(--accent); flex-shrink: 0;
+  }
+  .stock-toggle span { font-size: 11px; color: var(--muted); }
+
+  /* 버튼 */
+  .add-btn {
+    width: 100%; background: none;
+    border: 1.5px dashed var(--dashed);
+    border-radius: 12px; padding: 13px;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 14px; color: var(--muted);
+    cursor: pointer; margin-top: 4px;
+  }
+
+  .generate-btn {
+    width: 100%; background: var(--ink);
+    color: white; border: none; border-radius: 14px;
+    padding: 17px; font-family: 'Noto Sans KR', sans-serif;
+    font-size: 16px; font-weight: 700; cursor: pointer;
+    letter-spacing: 0.02em;
+  }
+  .generate-btn:active { opacity: 0.8; }
+
+  /* ── 숏폼 카드 ── */
+  .cards-scroll {
+    display: flex; flex-direction: column;
+    gap: 20px; align-items: center;
+    width: 100%;
+  }
+
+  .preview-title {
+    font-size: 12px; color: var(--muted); font-weight: 500;
+    text-align: center; margin-bottom: 14px;
+  }
+
+  .shortform-card {
+    width: 320px;
+    min-height: 320px;
+    background: var(--paper);
+    border-radius: 20px;
+    padding: 28px 28px 24px;
+    position: relative;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .shortform-card::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: repeating-linear-gradient(
+      0deg, transparent, transparent 27px,
+      rgba(180,160,130,0.07) 27px, rgba(180,160,130,0.07) 28px
+    );
+    pointer-events: none;
+  }
+
+  .intro-card .tear-top,
+  .intro-card .tear-bottom {
+    position: absolute; left: 0; right: 0; height: 14px;
+    background-image: repeating-radial-gradient(circle at 10px 0, var(--bg) 0, var(--bg) 7px, transparent 7px);
+    background-size: 20px 14px;
+  }
+  .intro-card .tear-top { top: 0; }
+  .intro-card .tear-bottom { bottom: 0; transform: rotate(180deg); }
+  .intro-card { padding-top: 28px !important; padding-bottom: 28px !important; }
+
+  .card-channel {
+    font-family: 'Nanum Pen Script', cursive;
+    font-size: 17px; color: var(--accent); margin-bottom: 2px;
+  }
+
+  .card-date-badge {
+    display: inline-block;
+    background: var(--ink); color: white;
+    font-size: 10px; font-weight: 700;
+    padding: 2px 9px; border-radius: 20px;
+    margin-bottom: 10px; letter-spacing: 0.04em;
+  }
+
+  .card-sub-label {
+    font-size: 9px; font-weight: 700; color: var(--muted);
+    letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px;
+  }
+
+  .card-big-title {
+    font-size: 20px; font-weight: 700;
+    color: var(--ink); line-height: 1.2; margin-bottom: 10px;
+  }
+
+  .card-divider {
+    border: none; border-top: 1.5px dashed var(--dashed); margin: 8px 0;
+  }
+
+  .intro-item {
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding: 5px 0; border-bottom: 1px solid rgba(200,185,170,0.25);
+  }
+  .intro-item:last-child { border-bottom: none; }
+  .intro-item-name { font-size: 13px; font-weight: 500; color: var(--ink); }
+  .intro-item-qty { font-size: 10px; color: var(--muted); margin-left: 4px; }
+  .intro-item-price { font-size: 13px; font-weight: 700; color: var(--ink); }
+
+  .intro-total-row {
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-top: 4px;
+  }
+  .intro-total-label { font-size: 11px; color: var(--muted); font-weight: 500; }
+  .intro-total-price { font-size: 22px; font-weight: 700; color: var(--ink); }
+
+  .stamp {
+    position: absolute; bottom: 22px; right: 22px;
+    width: 48px; height: 48px;
+    border: 2.5px solid var(--accent); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    transform: rotate(-14deg); opacity: 0.5;
+  }
+  .stamp span {
+    font-family: 'Nanum Pen Script', cursive;
+    font-size: 9px; color: var(--accent);
+    text-align: center; line-height: 1.4;
+  }
+
+  .outro-item {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    padding: 6px 0; border-bottom: 1px solid rgba(200,185,170,0.25);
+  }
+  .outro-item:last-child { border-bottom: none; }
+  .outro-item-left { flex: 1; }
+  .outro-item-name { font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 1px; }
+  .outro-item-detail { font-size: 10px; color: var(--muted); line-height: 1.4; }
+  .outro-item-price {
+    font-size: 14px; font-weight: 700; color: var(--ink);
+    text-align: right; padding-left: 10px; white-space: nowrap;
+  }
+  .outro-item-price.stock { font-size: 11px; color: var(--muted); font-weight: 500; }
+
+  .outro-total-box {
+    background: var(--ink); border-radius: 12px;
+    padding: 10px 14px;
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 10px; flex-shrink: 0;
+  }
+  .outro-total-label { font-size: 11px; color: rgba(255,255,255,0.55); font-weight: 500; }
+  .outro-total-right { display: flex; flex-direction: column; align-items: flex-end; }
+  .outro-total-price {
+    font-size: 34px; font-weight: 700; color: white;
+    letter-spacing: -0.02em; line-height: 1;
+  }
+  .outro-per-portion {
+    font-size: 11px; color: rgba(255,255,255,0.65); font-weight: 500;
+    margin-top: 4px;
+  }
+
+  .dl-row {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 10px; width: 320px;
+  }
+  .dl-btn {
+    background: white; border: 1.5px solid var(--border);
+    border-radius: 12px; padding: 13px 8px;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 13px; font-weight: 600; color: var(--ink);
+    cursor: pointer; text-align: center;
+  }
+  .dl-btn:active { background: var(--bg); border-color: var(--accent); }
+
+  .section-divider {
+    width: 100%; display: flex; align-items: center;
+    gap: 10px; color: var(--dashed); font-size: 11px; font-weight: 500;
+  }
+  .section-divider::before, .section-divider::after {
+    content: ''; flex: 1; height: 1px; background: var(--border);
+  }
+
+  #introItems { flex: 1; }
+  #outroItems { flex: 1; min-height: 0; }
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<nav class="tab-nav">
+  <a href="index.html" class="tab-logo">지끼니</a>
+  <a href="calculator.html" class="tab-link active">식비 계산기</a>
+  <a href="template.html" class="tab-link">롱폼 PNG</a>
+</nav>
+
+<div class="calc-main">
+
+<div class="header">
+  <div class="header-title">식비 계산기</div>
+  <div class="header-sub">재료 입력 → 숏폼용 카드 이미지로 저장</div>
+</div>
+
+<!-- 기본 정보 -->
+<div class="panel">
+  <div class="panel-title">기본 정보</div>
+  <div class="meta-grid">
+    <div class="field-group">
+      <div class="field-label">날짜</div>
+      <input type="text" id="dateInput" placeholder="260418 토요일">
+    </div>
+    <div class="field-group">
+      <div class="field-label">오늘 만든 것</div>
+      <input type="text" id="menuInput" placeholder="계란 양배추 토스트">
+    </div>
+    <div class="field-group">
+      <div class="field-label">나눠 먹는 횟수</div>
+      <input type="number" id="portionInput" placeholder="1" min="1" value="1">
+    </div>
+    <div></div>
+  </div>
+</div>
+
+<!-- 재료 -->
+<div class="panel">
+  <div class="panel-title">재료</div>
+  <div id="ingredientList"></div>
+  <button class="add-btn" onclick="addIngredient()">＋ 재료 추가</button>
+</div>
+
+<button class="generate-btn" onclick="generateCards()">카드 만들기 →</button>
+
+<!-- 미리보기 -->
+<div id="previewArea" class="hidden" style="width:100%">
+  <div class="preview-title">숏폼 카드 미리보기</div>
+  <div class="cards-scroll">
+
+    <!-- 인트로 -->
+    <div id="introCard" class="shortform-card intro-card">
+      <div class="tear-top"></div>
+      <div class="card-channel">지끼니</div>
+      <div class="card-date-badge" id="cardDate"></div>
+      <div class="card-sub-label">오늘 만든 것</div>
+      <div class="card-big-title" id="cardMenu"></div>
+      <hr class="card-divider">
+      <div class="card-sub-label">오늘 장본 것들</div>
+      <div id="introItems"></div>
+      <hr class="card-divider">
+      <div class="intro-total-row">
+        <span class="intro-total-label">오늘 지출</span>
+        <span class="intro-total-price" id="introTotal"></span>
+      </div>
+      <div class="stamp"><span>먹는게<br>남는거</span></div>
+      <div class="tear-bottom"></div>
+    </div>
+
+    <div class="dl-row">
+      <button class="dl-btn" onclick="downloadCard('introCard','지끼니_인트로')">⬇ 인트로 저장</button>
+      <div></div>
+    </div>
+
+    <div class="section-divider">아웃트로</div>
+
+    <!-- 아웃트로 -->
+    <div id="outroCard" class="shortform-card">
+      <div class="card-channel">지끼니</div>
+      <div class="card-date-badge" id="outroDate"></div>
+      <div class="card-sub-label">이 한 끼, 얼마였을까</div>
+      <div class="card-big-title" id="outroMenu"></div>
+      <hr class="card-divider">
+      <div id="outroItems"></div>
+      <div class="outro-total-box">
+        <span class="outro-total-label">이 한 끼</span>
+        <div class="outro-total-right">
+          <span class="outro-total-price" id="outroTotal"></span>
+          <span class="outro-per-portion hidden" id="outroPerPortion"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="dl-row">
+      <div></div>
+      <button class="dl-btn" onclick="downloadCard('outroCard','지끼니_아웃트로')">⬇ 아웃트로 저장</button>
+    </div>
+
+  </div>
+</div>
+
+</div><!-- .calc-main -->
+
+<script>
+  let ingredients = [];
+  let idCounter = 1;
+  const units = ['개', '장', '봉', '팩', 'g', 'kg', 'ml', 'L', '줌', '컵'];
+
+  function addIngredient() {
+    const id = idCounter++;
+    ingredients.push({ id, name: '', total: '', unit: '개', price: '', used: '', usedUnit: '개', isStock: false });
+    renderIngredients();
+  }
+
+  function removeIngredient(id) {
+    ingredients = ingredients.filter(i => i.id !== id);
+    renderIngredients();
+  }
+
+  function renderIngredients() {
+    const list = document.getElementById('ingredientList');
+    list.innerHTML = '';
+
+    ingredients.forEach((ing, idx) => {
+      const card = document.createElement('div');
+      card.className = 'ing-card';
+
+      const header = document.createElement('div');
+      header.className = 'ing-card-header';
+
+      const num = document.createElement('div');
+      num.className = 'ing-number';
+      num.textContent = idx + 1;
+
+      const nameIn = document.createElement('input');
+      nameIn.type = 'text';
+      nameIn.className = 'ing-name-input';
+      nameIn.placeholder = '재료명 (예: 왕란)';
+      nameIn.value = ing.name;
+      nameIn.addEventListener('input', e => { ing.name = e.target.value; });
+
+      const removeBtn = document.createElement('button');
+      removeBtn.className = 'ing-remove';
+      removeBtn.textContent = '×';
+      removeBtn.addEventListener('click', () => removeIngredient(ing.id));
+
+      header.append(num, nameIn, removeBtn);
+
+      const cols = document.createElement('div');
+      cols.className = 'ing-cols';
+
+      const buyCol = document.createElement('div');
+      buyCol.innerHTML = `<div class="ing-col-label">구매량 / 금액</div>`;
+
+      const buyRow = document.createElement('div');
+      buyRow.className = 'row2';
+
+      const totalIn = document.createElement('input');
+      totalIn.type = 'number'; totalIn.placeholder = '수량';
+      totalIn.value = ing.total; totalIn.style.cssText = 'padding:10px 8px;font-size:14px;border-radius:8px;';
+      totalIn.addEventListener('input', e => { ing.total = e.target.value; refreshCalc(ing); });
+
+      const unitSel = makeSelect(units, ing.unit);
+      unitSel.addEventListener('change', e => { ing.unit = e.target.value; refreshCalc(ing); });
+
+      buyRow.append(totalIn, unitSel);
+
+      const priceIn = document.createElement('input');
+      priceIn.type = 'number'; priceIn.placeholder = '금액 (원)';
+      priceIn.value = ing.price; priceIn.style.cssText = 'padding:10px 8px;font-size:14px;border-radius:8px;';
+      priceIn.addEventListener('input', e => { ing.price = e.target.value; refreshCalc(ing); });
+
+      buyCol.append(buyRow, priceIn);
+
+      const useCol = document.createElement('div');
+      useCol.innerHTML = `<div class="ing-col-label">사용량</div>`;
+
+      const usedRow = document.createElement('div');
+      usedRow.className = 'row2';
+
+      const usedIn = document.createElement('input');
+      usedIn.type = 'number'; usedIn.placeholder = '사용량';
+      usedIn.value = ing.used; usedIn.style.cssText = 'padding:10px 8px;font-size:14px;border-radius:8px;';
+      usedIn.dataset.usedFor = ing.id;
+      usedIn.addEventListener('input', e => { ing.used = e.target.value; refreshCalc(ing); });
+
+      const usedUnitSel = makeSelect(units, ing.usedUnit);
+      usedUnitSel.addEventListener('change', e => { ing.usedUnit = e.target.value; });
+
+      usedRow.append(usedIn, usedUnitSel);
+
+      const calcBadge = document.createElement('div');
+      calcBadge.className = 'calc-badge';
+      calcBadge.dataset.calcFor = ing.id;
+      setBadgeContent(calcBadge, ing);
+
+      const stockToggle = document.createElement('label');
+      stockToggle.className = 'stock-toggle';
+      const stockCheck = document.createElement('input');
+      stockCheck.type = 'checkbox'; stockCheck.checked = ing.isStock;
+      stockCheck.style.cssText = 'width:16px;height:16px;padding:0;';
+      const stockSpan = document.createElement('span');
+      stockSpan.textContent = '냉장고 재고';
+
+      stockCheck.addEventListener('change', e => {
+        ing.isStock = e.target.checked;
+        usedRow.style.opacity = ing.isStock ? '0.3' : '1';
+        usedRow.style.pointerEvents = ing.isStock ? 'none' : '';
+        refreshCalc(ing);
+      });
+      if (ing.isStock) { usedRow.style.opacity = '0.3'; usedRow.style.pointerEvents = 'none'; }
+
+      stockToggle.append(stockCheck, stockSpan);
+      useCol.append(usedRow, calcBadge, stockToggle);
+
+      cols.append(buyCol, useCol);
+      card.append(header, cols);
+      list.appendChild(card);
+    });
+  }
+
+  function makeSelect(opts, selected) {
+    const sel = document.createElement('select');
+    sel.style.cssText = 'border-radius:8px;font-size:13px;padding:10px 4px;';
+    opts.forEach(u => {
+      const o = document.createElement('option');
+      o.value = u; o.textContent = u;
+      if (u === selected) o.selected = true;
+      sel.appendChild(o);
+    });
+    return sel;
+  }
+
+  function setBadgeContent(el, ing) {
+    if (ing.isStock) { el.textContent = '재고'; return; }
+    const total = parseFloat(ing.total), used = parseFloat(ing.used);
+    if (total && used && !unitsCompatible(ing.unit, ing.usedUnit)) {
+      el.textContent = '단위 불일치';
+      return;
+    }
+    const amt = calcUsedPrice(ing);
+    el.textContent = amt > 0 ? '≈ ' + amt.toLocaleString() + '원' : '—';
+  }
+
+  function refreshCalc(ing) {
+    const el = document.querySelector(`[data-calc-for="${ing.id}"]`);
+    if (!el) return;
+    setBadgeContent(el, ing);
+  }
+
+  function toBase(value, unit) {
+    if (unit === 'kg') return { value: value * 1000, base: 'g' };
+    if (unit === 'g')  return { value, base: 'g' };
+    if (unit === 'L')  return { value: value * 1000, base: 'ml' };
+    if (unit === 'ml') return { value, base: 'ml' };
+    return { value, base: unit };
+  }
+
+  function unitsCompatible(u1, u2) {
+    return toBase(1, u1).base === toBase(1, u2).base;
+  }
+
+  function calcUsedPrice(ing) {
+    if (ing.isStock) return 0;
+    const total = parseFloat(ing.total);
+    const price = parseFloat(ing.price);
+    const used = parseFloat(ing.used);
+    if (!total || !price || !used) return 0;
+    const tb = toBase(total, ing.unit);
+    const ub = toBase(used, ing.usedUnit);
+    if (tb.base !== ub.base) return 0;
+    return Math.round((ub.value / tb.value) * price);
+  }
+
+  function generateCards() {
+    const date = document.getElementById('dateInput').value || '날짜 미입력';
+    const menu = document.getElementById('menuInput').value || '오늘의 요리';
+
+    document.getElementById('cardDate').textContent = date;
+    document.getElementById('cardMenu').textContent = menu;
+
+    let introHTML = '', introSum = 0;
+    ingredients.forEach(ing => {
+      if (!ing.name) return;
+      const price = parseFloat(ing.price) || 0;
+      if (!ing.isStock) introSum += price;
+      introHTML += `<div class="intro-item">
+        <span class="intro-item-name">${ing.name}<span class="intro-item-qty">${ing.total ? ing.total + ing.unit : ''}</span></span>
+        <span class="intro-item-price">${ing.isStock ? '재고' : (price ? price.toLocaleString() + '원' : '—')}</span>
+      </div>`;
+    });
+    document.getElementById('introItems').innerHTML = introHTML;
+    document.getElementById('introTotal').textContent = introSum ? introSum.toLocaleString() + '원' : '—';
+
+    document.getElementById('outroDate').textContent = date;
+    document.getElementById('outroMenu').textContent = menu;
+
+    let outroHTML = '', outroSum = 0;
+    ingredients.forEach(ing => {
+      if (!ing.name) return;
+      const amt = calcUsedPrice(ing);
+      outroSum += amt;
+      const usedStr = ing.isStock ? '냉장고 재고' : (ing.used ? `${ing.used}${ing.usedUnit} 사용` : '');
+      const buyStr = (!ing.isStock && ing.total && ing.price) ? `${ing.total}${ing.unit} ${parseFloat(ing.price).toLocaleString()}원 구매` : '';
+      const detail = [buyStr, usedStr].filter(Boolean).join(' · ');
+      outroHTML += `<div class="outro-item">
+        <div class="outro-item-left">
+          <div class="outro-item-name">${ing.name}</div>
+          <div class="outro-item-detail">${detail}</div>
+        </div>
+        <div class="outro-item-price ${ing.isStock ? 'stock' : ''}">${ing.isStock ? '재고' : (amt ? '≈ ' + amt.toLocaleString() + '원' : '—')}</div>
+      </div>`;
+    });
+    document.getElementById('outroItems').innerHTML = outroHTML;
+    document.getElementById('outroTotal').textContent = outroSum ? outroSum.toLocaleString() + '원' : '—';
+
+    const portions = Math.max(1, parseInt(document.getElementById('portionInput').value) || 1);
+    const perPortionEl = document.getElementById('outroPerPortion');
+    if (portions >= 2 && outroSum > 0) {
+      const per = Math.round(outroSum / portions);
+      perPortionEl.textContent = `${portions}회 나눠 먹으면 1회 ≈ ${per.toLocaleString()}원`;
+      perPortionEl.classList.remove('hidden');
+    } else {
+      perPortionEl.classList.add('hidden');
+    }
+
+    document.getElementById('previewArea').classList.remove('hidden');
+    setTimeout(() => document.getElementById('previewArea').scrollIntoView({ behavior: 'smooth' }), 100);
+  }
+
+  function downloadCard(cardId, filename) {
+    const card = document.getElementById(cardId);
+    const w = card.offsetWidth;
+    const h = card.offsetHeight;
+    html2canvas(card, {
+      scale: 3, backgroundColor: '#faf7f2', useCORS: true, logging: false,
+      width: w, height: h
+    }).then(canvas => {
+      const link = document.createElement('a');
+      link.download = filename + '_' + new Date().toISOString().slice(0, 10) + '.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    });
+  }
+
+  addIngredient();
+  addIngredient();
+</script>
+</body>
+</html>
