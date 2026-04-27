@@ -324,14 +324,6 @@
     margin-top: 4px;
   }
 
-  .outro-note {
-    font-size: 10px; color: var(--muted);
-    margin-top: 7px; line-height: 1.6;
-    padding: 8px 10px;
-    background: rgba(200,185,170,0.15); border-radius: 8px;
-    flex-shrink: 0;
-  }
-
   /* 다운로드 */
   .dl-row {
     display: grid; grid-template-columns: 1fr 1fr;
@@ -441,7 +433,6 @@
           <span class="outro-per-portion hidden" id="outroPerPortion"></span>
         </div>
       </div>
-      <div class="outro-note hidden" id="outroNote"></div>
     </div>
 
     <div class="dl-row">
@@ -656,7 +647,7 @@
     document.getElementById('outroDate').textContent = date;
     document.getElementById('outroMenu').textContent = menu;
 
-    let outroHTML = '', outroSum = 0, noteLines = [];
+    let outroHTML = '', outroSum = 0;
     ingredients.forEach(ing => {
       if (!ing.name) return;
       const amt = calcUsedPrice(ing);
@@ -671,16 +662,6 @@
         </div>
         <div class="outro-item-price ${ing.isStock ? 'stock' : ''}">${ing.isStock ? '재고' : (amt ? '≈ ' + amt.toLocaleString() + '원' : '—')}</div>
       </div>`;
-      const tN = parseFloat(ing.total), uN = parseFloat(ing.used);
-      if (!ing.isStock && tN && uN && unitsCompatible(ing.unit, ing.usedUnit)) {
-        const tb = toBase(tN, ing.unit);
-        const ub = toBase(uN, ing.usedUnit);
-        if (tb.value > ub.value) {
-          const remainBase = tb.value - ub.value;
-          const remainInBuy = ing.unit === 'kg' || ing.unit === 'L' ? remainBase / 1000 : remainBase;
-          noteLines.push(`${ing.name} ${fmtNum(remainInBuy)}${ing.unit} 남음`);
-        }
-      }
     });
     document.getElementById('outroItems').innerHTML = outroHTML;
     document.getElementById('outroTotal').textContent = outroSum ? outroSum.toLocaleString() + '원' : '—';
@@ -694,12 +675,6 @@
     } else {
       perPortionEl.classList.add('hidden');
     }
-
-    const noteEl = document.getElementById('outroNote');
-    if (noteLines.length) {
-      noteEl.textContent = '남은 재료 · ' + noteLines.join(' / ') + ' → 다음 끼니에 쓸 예정';
-      noteEl.classList.remove('hidden');
-    } else { noteEl.classList.add('hidden'); }
 
     document.getElementById('previewArea').classList.remove('hidden');
     setTimeout(() => document.getElementById('previewArea').scrollIntoView({ behavior: 'smooth' }), 100);
