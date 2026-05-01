@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>화폐 스티커 — 지끼니</title>
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-nav: #f0ebe3;
+    --border-nav: #d9cfc4;
+    --ink-nav: #2a2018;
+    --muted-nav: #9a8870;
+    --accent-nav: #c9a97a;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    background: #f5f0e8;
+    font-family: 'Georgia', serif;
+    min-height: 100vh;
+  }
+
+  /* ── 탭 네비게이션 ── */
+  .tab-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--bg-nav);
+    display: flex;
+    align-items: stretch;
+    padding: 0 20px;
+    border-bottom: 1.5px solid var(--border-nav);
+    box-shadow: 0 1px 6px rgba(0,0,0,0.04);
+  }
+
+  .tab-logo {
+    font-family: 'Nanum Pen Script', cursive;
+    font-size: 22px;
+    color: var(--ink-nav);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    padding: 12px 16px 12px 0;
+    margin-right: 8px;
+    border-right: 1px solid var(--border-nav);
+  }
+
+  .tab-link {
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    border-bottom: 2.5px solid transparent;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted-nav);
+    text-decoration: none;
+    transition: color 0.15s;
+    margin-bottom: -1.5px;
+    white-space: nowrap;
+  }
+
+  .tab-link:hover { color: var(--ink-nav); }
+
+  .tab-link.active {
+    color: var(--ink-nav);
+    border-bottom-color: var(--accent-nav);
+    font-weight: 700;
+  }
+
+  /* ── 본문 ── */
+  .money-main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px 60px;
+    gap: 36px;
+  }
+
+  .page-title {
+    font-size: 14px;
+    color: #999;
+    letter-spacing: 0.12em;
+    font-family: sans-serif;
+    font-weight: 400;
+  }
+
+  .section-label {
+    font-size: 11px;
+    color: #bbb;
+    letter-spacing: 0.1em;
+    font-family: sans-serif;
+    align-self: flex-start;
+    margin-left: calc(50% - 260px);
+  }
+
+  .row {
+    display: flex;
+    gap: 24px;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .coin-wrap, .bill-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .label {
+    font-size: 11px;
+    color: #aaa;
+    letter-spacing: 0.06em;
+    font-family: sans-serif;
+  }
+
+  .dl-btn {
+    background: #3a3a3a;
+    color: white;
+    border: none;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 10px;
+    cursor: pointer;
+    font-family: sans-serif;
+    letter-spacing: 0.06em;
+    transition: background 0.2s;
+  }
+  .dl-btn:hover { background: #111; }
+
+  .dl-all-btn {
+    background: #5a3e00;
+    color: #f0d040;
+    border: none;
+    padding: 10px 28px;
+    border-radius: 30px;
+    font-size: 12px;
+    cursor: pointer;
+    font-family: sans-serif;
+    letter-spacing: 0.08em;
+    margin-top: 8px;
+    transition: background 0.2s;
+  }
+  .dl-all-btn:hover { background: #3a2a00; }
+
+  hr {
+    width: 100%;
+    max-width: 580px;
+    border: none;
+    border-top: 1px dashed #ddd;
+  }
+</style>
+</head>
+<body>
+
+<nav class="tab-nav">
+  <a href="index.html" class="tab-logo">지끼니</a>
+  <a href="calculator.html" class="tab-link">식비 계산기</a>
+  <a href="template.html" class="tab-link">롱폼 PNG</a>
+  <a href="money.html" class="tab-link active">화폐 스티커</a>
+</nav>
+
+<div class="money-main">
+
+<h1 class="page-title">지끼니 화폐 스티커 세트</h1>
+
+<!-- 동전 -->
+<span class="section-label">동전</span>
+<div class="row" id="coins-row">
+
+  <!-- 10원 -->
+  <div class="coin-wrap">
+    <svg id="coin-10" width="80" height="80" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="52" cy="54" rx="38" ry="36" fill="#7a5a30" opacity="0.35"/>
+      <path d="M48,12 C62,10 88,26 89,48 C90,68 74,90 52,91 C30,92 10,74 10,52 C10,30 28,14 48,12 Z" fill="#c8934a"/>
+      <path d="M32,22 C42,16 60,18 70,28" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" opacity="0.4"/>
+      <path d="M48,12 C62,10 88,26 89,48 C90,68 74,90 52,91 C30,92 10,74 10,52 C10,30 28,14 48,12 Z" fill="none" stroke="#5a3000" stroke-width="2.2"/>
+      <path d="M48,22 C60,20 80,32 81,48 C82,64 68,82 52,83 C36,84 18,70 18,52 C18,36 32,24 48,22 Z" fill="none" stroke="#5a3000" stroke-width="1.2"/>
+      <text x="49" y="52" text-anchor="middle" font-family="'Georgia',serif" font-size="24" font-weight="bold" fill="#3a1a00">10</text>
+      <text x="50" y="67" text-anchor="middle" font-family="'Georgia',serif" font-size="9" fill="#3a1a00">원</text>
+    </svg>
+    <span class="label">10원</span>
+    <button class="dl-btn" onclick="downloadSVG('coin-10','10원_동전')">PNG 저장</button>
+  </div>
+
+  <!-- 50원 -->
+  <div class="coin-wrap">
+    <svg id="coin-50" width="88" height="88" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="52" cy="54" rx="38" ry="36" fill="#7a7a7a" opacity="0.3"/>
+      <path d="M48,12 C62,10 88,26 89,48 C90,68 74,90 52,91 C30,92 10,74 10,52 C10,30 28,14 48,12 Z" fill="#d4d4d4"/>
+      <path d="M32,22 C42,16 60,18 70,28" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" opacity="0.6"/>
+      <path d="M48,12 C62,10 88,26 89,48 C90,68 74,90 52,91 C30,92 10,74 10,52 C10,30 28,14 48,12 Z" fill="none" stroke="#555" stroke-width="2.2"/>
+      <path d="M48,22 C60,20 80,32 81,48 C82,64 68,82 52,83 C36,84 18,70 18,52 C18,36 32,24 48,22 Z" fill="none" stroke="#555" stroke-width="1.2"/>
+      <ellipse cx="50" cy="50" rx="7" ry="7" fill="#f5f0e8" stroke="#555" stroke-width="1.5"/>
+      <text x="49" y="46" text-anchor="middle" font-family="'Georgia',serif" font-size="14" font-weight="bold" fill="#333">50</text>
+      <text x="50" y="66" text-anchor="middle" font-family="'Georgia',serif" font-size="9" fill="#333">원</text>
+    </svg>
+    <span class="label">50원</span>
+    <button class="dl-btn" onclick="downloadSVG('coin-50','50원_동전')">PNG 저장</button>
+  </div>
+
+  <!-- 100원 -->
+  <div class="coin-wrap">
+    <svg id="coin-100" width="96" height="96" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="52" cy="54" rx="38" ry="36" fill="#7a7a7a" opacity="0.3"/>
+      <path d="M48,12 C62,10 88,26 89,48 C90,68 74,90 52,91 C30,92 10,74 10,52 C10,30 28,14 48,12 Z" fill="#e0e0e0"/>
+      <path d="M32,22 C42,16 60,18 70,28" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" opacity="0.6"/>
+      <path d="M48,12 C62,10 88,26 89,48 C90,68 74,90 52,91 C30,92 10,74 10,52 C10,30 28,14 48,12 Z" fill="none" stroke="#555" stroke-width="2.2"/>
+      <path d="M48,22 C60,20 80,32 81,48 C82,64 68,82 52,83 C36,84 18,70 18,52 C18,36 32,24 48,22 Z" fill="none" stroke="#555" stroke-width="1.2"/>
+      <text x="49" y="52" text-anchor="middle" font-family="'Georgia',serif" font-size="24" font-weight="bold" fill="#333">100</text>
+      <text x="50" y="67" text-anchor="middle" font-family="'Georgia',serif" font-size="9" fill="#333">원</text>
+    </svg>
+    <span class="label">100원</span>
+    <button class="dl-btn" onclick="downloadSVG('coin-100','100원_동전')">PNG 저장</button>
+  </div>
+
+  <!-- 500원 -->
+  <div class="coin-wrap">
+    <svg id="coin-500" width="108" height="108" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="52" cy="54" rx="38" ry="36" fill="#7a7a7a" opacity="0.3"/>
+      <path d="M48,12 C62,10 88,26 89,48 C90,68 74,90 52,91 C30,92 10,74 10,52 C10,30 28,14 48,12 Z" fill="#e8e8e8"/>
+      <path d="M32,22 C42,16 60,18 70,28" fill="none" stroke="white" stroke-width="4" stroke-linecap="round" opacity="0.65"/>
+      <path d="M48,12 C62,10 88,26 89,48 C90,68 74,90 52,91 C30,92 10,74 10,52 C10,30 28,14 48,12 Z" fill="none" stroke="#444" stroke-width="2.5"/>
+      <path d="M48,22 C60,20 80,32 81,48 C82,64 68,82 52,83 C36,84 18,70 18,52 C18,36 32,24 48,22 Z" fill="none" stroke="#444" stroke-width="1.4"/>
+      <text x="49" y="52" text-anchor="middle" font-family="'Georgia',serif" font-size="22" font-weight="bold" fill="#222">500</text>
+      <text x="50" y="67" text-anchor="middle" font-family="'Georgia',serif" font-size="9" fill="#222">원</text>
+    </svg>
+    <span class="label">500원</span>
+    <button class="dl-btn" onclick="downloadSVG('coin-500','500원_동전')">PNG 저장</button>
+  </div>
+
+</div>
+
+<hr/>
+
+<!-- 지폐 -->
+<span class="section-label">지폐</span>
+<div class="row" id="bills-row">
+
+  <!-- 1000원 -->
+  <div class="bill-wrap">
+    <svg id="bill-1000" width="140" height="72" viewBox="0 0 200 103" xmlns="http://www.w3.org/2000/svg">
+      <rect x="4" y="6" width="194" height="97" rx="7" fill="#4a7a4a" opacity="0.25"/>
+      <rect x="0" y="0" width="194" height="97" rx="6" fill="#d4edda"/>
+      <rect x="0" y="0" width="36" height="97" rx="6" fill="#a8d4b0"/>
+      <rect x="30" y="0" width="6" height="97" fill="#a8d4b0"/>
+      <path d="M8,10 C60,5 140,8 186,12" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" opacity="0.45"/>
+      <rect x="0" y="0" width="194" height="97" rx="6" fill="none" stroke="#3a6a3a" stroke-width="2.2"/>
+      <rect x="6" y="6" width="182" height="85" rx="4" fill="none" stroke="#3a6a3a" stroke-width="1" stroke-dasharray="3,2"/>
+      <text x="118" y="46" text-anchor="middle" font-family="'Georgia',serif" font-size="28" font-weight="bold" fill="#2a5a2a" transform="rotate(-1,118,46)">1,000</text>
+      <text x="118" y="68" text-anchor="middle" font-family="'Georgia',serif" font-size="11" fill="#2a5a2a">원</text>
+      <text x="18" y="65" text-anchor="middle" font-family="'Georgia',serif" font-size="9" fill="#2a5a2a" writing-mode="tb">천원</text>
+      <circle cx="155" cy="20" r="3" fill="#3a6a3a" opacity="0.4"/>
+      <circle cx="165" cy="20" r="2" fill="#3a6a3a" opacity="0.3"/>
+      <circle cx="173" cy="20" r="3" fill="#3a6a3a" opacity="0.4"/>
+      <circle cx="155" cy="78" r="3" fill="#3a6a3a" opacity="0.4"/>
+      <circle cx="165" cy="78" r="2" fill="#3a6a3a" opacity="0.3"/>
+      <circle cx="173" cy="78" r="3" fill="#3a6a3a" opacity="0.4"/>
+    </svg>
+    <span class="label">1,000원</span>
+    <button class="dl-btn" onclick="downloadSVG('bill-1000','1000원_지폐')">PNG 저장</button>
+  </div>
+
+  <!-- 5000원 -->
+  <div class="bill-wrap">
+    <svg id="bill-5000" width="140" height="72" viewBox="0 0 200 103" xmlns="http://www.w3.org/2000/svg">
+      <rect x="4" y="6" width="194" height="97" rx="7" fill="#8a6a20" opacity="0.25"/>
+      <rect x="0" y="0" width="194" height="97" rx="6" fill="#faeac0"/>
+      <rect x="0" y="0" width="36" height="97" rx="6" fill="#f0d080"/>
+      <rect x="30" y="0" width="6" height="97" fill="#f0d080"/>
+      <path d="M8,10 C60,5 140,8 186,12" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" opacity="0.5"/>
+      <rect x="0" y="0" width="194" height="97" rx="6" fill="none" stroke="#8a6000" stroke-width="2.2"/>
+      <rect x="6" y="6" width="182" height="85" rx="4" fill="none" stroke="#8a6000" stroke-width="1" stroke-dasharray="3,2"/>
+      <text x="118" y="46" text-anchor="middle" font-family="'Georgia',serif" font-size="28" font-weight="bold" fill="#6a4400" transform="rotate(-1,118,46)">5,000</text>
+      <text x="118" y="68" text-anchor="middle" font-family="'Georgia',serif" font-size="11" fill="#6a4400">원</text>
+      <text x="18" y="65" text-anchor="middle" font-family="'Georgia',serif" font-size="9" fill="#6a4400" writing-mode="tb">오천원</text>
+      <circle cx="155" cy="20" r="3" fill="#8a6000" opacity="0.4"/>
+      <circle cx="165" cy="20" r="2" fill="#8a6000" opacity="0.3"/>
+      <circle cx="173" cy="20" r="3" fill="#8a6000" opacity="0.4"/>
+      <circle cx="155" cy="78" r="3" fill="#8a6000" opacity="0.4"/>
+      <circle cx="165" cy="78" r="2" fill="#8a6000" opacity="0.3"/>
+      <circle cx="173" cy="78" r="3" fill="#8a6000" opacity="0.4"/>
+    </svg>
+    <span class="label">5,000원</span>
+    <button class="dl-btn" onclick="downloadSVG('bill-5000','5000원_지폐')">PNG 저장</button>
+  </div>
+
+  <!-- 10000원 -->
+  <div class="bill-wrap">
+    <svg id="bill-10000" width="140" height="72" viewBox="0 0 200 103" xmlns="http://www.w3.org/2000/svg">
+      <rect x="4" y="6" width="194" height="97" rx="7" fill="#3a5a8a" opacity="0.25"/>
+      <rect x="0" y="0" width="194" height="97" rx="6" fill="#ccdaf5"/>
+      <rect x="0" y="0" width="36" height="97" rx="6" fill="#9abce8"/>
+      <rect x="30" y="0" width="6" height="97" fill="#9abce8"/>
+      <path d="M8,10 C60,5 140,8 186,12" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" opacity="0.5"/>
+      <rect x="0" y="0" width="194" height="97" rx="6" fill="none" stroke="#2a4a7a" stroke-width="2.2"/>
+      <rect x="6" y="6" width="182" height="85" rx="4" fill="none" stroke="#2a4a7a" stroke-width="1" stroke-dasharray="3,2"/>
+      <text x="112" y="46" text-anchor="middle" font-family="'Georgia',serif" font-size="24" font-weight="bold" fill="#1a3a6a" transform="rotate(-1,112,46)">10,000</text>
+      <text x="118" y="68" text-anchor="middle" font-family="'Georgia',serif" font-size="11" fill="#1a3a6a">원</text>
+      <text x="18" y="62" text-anchor="middle" font-family="'Georgia',serif" font-size="8" fill="#1a3a6a" writing-mode="tb">만원</text>
+      <circle cx="155" cy="20" r="3" fill="#2a4a7a" opacity="0.4"/>
+      <circle cx="165" cy="20" r="2" fill="#2a4a7a" opacity="0.3"/>
+      <circle cx="173" cy="20" r="3" fill="#2a4a7a" opacity="0.4"/>
+      <circle cx="155" cy="78" r="3" fill="#2a4a7a" opacity="0.4"/>
+      <circle cx="165" cy="78" r="2" fill="#2a4a7a" opacity="0.3"/>
+      <circle cx="173" cy="78" r="3" fill="#2a4a7a" opacity="0.4"/>
+    </svg>
+    <span class="label">10,000원</span>
+    <button class="dl-btn" onclick="downloadSVG('bill-10000','10000원_지폐')">PNG 저장</button>
+  </div>
+
+</div>
+
+<button class="dl-all-btn" onclick="downloadAll()">전체 PNG 저장</button>
+
+</div><!-- .money-main -->
+
+<script>
+  function downloadSVG(svgId, filename) {
+    const svg = document.getElementById(svgId);
+    const svgData = new XMLSerializer().serializeToString(svg);
+    const canvas = document.createElement('canvas');
+    const scale = 4;
+    const w = svg.width.baseVal.value || parseInt(svg.getAttribute('width'));
+    const h = svg.height.baseVal.value || parseInt(svg.getAttribute('height'));
+    canvas.width = w * scale;
+    canvas.height = h * scale;
+    const ctx = canvas.getContext('2d');
+    ctx.scale(scale, scale);
+    ctx.clearRect(0, 0, w, h);
+    const img = new Image();
+    const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+    const url = URL.createObjectURL(svgBlob);
+    img.onload = function() {
+      ctx.drawImage(img, 0, 0, w, h);
+      URL.revokeObjectURL(url);
+      const a = document.createElement('a');
+      a.download = filename + '.png';
+      a.href = canvas.toDataURL('image/png');
+      a.click();
+    };
+    img.src = url;
+  }
+
+  function downloadAll() {
+    const ids = [
+      ['coin-10',    '10원_동전'],
+      ['coin-50',    '50원_동전'],
+      ['coin-100',   '100원_동전'],
+      ['coin-500',   '500원_동전'],
+      ['bill-1000',  '1000원_지폐'],
+      ['bill-5000',  '5000원_지폐'],
+      ['bill-10000', '10000원_지폐'],
+    ];
+    ids.forEach(([id, name], i) => {
+      setTimeout(() => downloadSVG(id, name), i * 300);
+    });
+  }
+</script>
+</body>
+</html>

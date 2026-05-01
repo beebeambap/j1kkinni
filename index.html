@@ -102,14 +102,14 @@
 
   .hub-cards {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(3, 1fr);
     gap: 16px;
     width: 100%;
-    max-width: 540px;
+    max-width: 800px;
   }
 
-  @media (max-width: 480px) {
-    .hub-cards { grid-template-columns: 1fr; }
+  @media (max-width: 680px) {
+    .hub-cards { grid-template-columns: 1fr; max-width: 320px; }
     .hub-title { font-size: 52px; }
   }
 
@@ -188,6 +188,7 @@
   <span class="tab-logo">지끼니</span>
   <a href="calculator.html" class="tab-link">식비 계산기</a>
   <a href="template.html" class="tab-link">롱폼 PNG</a>
+  <a href="money.html" class="tab-link">화폐 스티커</a>
 </nav>
 
 <main class="hub">
@@ -207,6 +208,12 @@
       <div class="hub-card-tag">롱폼용</div>
       <div class="hub-card-title">가로형<br>템플릿</div>
       <div class="hub-card-desc">1920×1080 PNG 생성<br>영상 편집용 사이드<br>패널 배경 제작</div>
+      <div class="hub-card-arrow">→</div>
+    </a>
+    <a href="money.html" class="hub-card">
+      <div class="hub-card-tag">소품용</div>
+      <div class="hub-card-title">화폐<br>스티커</div>
+      <div class="hub-card-desc">동전·지폐 일러스트<br>투명 PNG로 저장해<br>영상 소품으로 활용</div>
       <div class="hub-card-arrow">→</div>
     </a>
   </div>
